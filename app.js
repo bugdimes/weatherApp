@@ -16,11 +16,24 @@ weatherApp.config(function ($routeProvider) {
         });
 });
 
-// Controllers
-weatherApp.controller('homeCtrl', ['$scope', function ($scope) {
+// Services
+weatherApp.service('cityService', function () {
+    this.city = '';
+});
 
+// Controllers
+weatherApp.controller('homeCtrl', ['$scope', '$log', 'cityService', function ($scope, $log, cityService) {
+    $scope.city = cityService.city;
+    
+    $scope.$watch('city', function () {
+        cityService.city = $scope.city;
+    })
 }]);
 
-weatherApp.controller('forecastCtrl', ['$scope', function ($scope) {
+weatherApp.controller('forecastCtrl', ['$scope', '$log', 'cityService', function ($scope, $log, cityService) {
+    $scope.city = cityService.city;
 
+    $scope.$watch('city', function () {
+        cityService.city = $scope.city;
+    })
 }]);
