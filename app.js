@@ -18,11 +18,11 @@ weatherApp.config(function ($routeProvider) {
 
 // Services
 weatherApp.service('cityService', function () {
-    this.city = '';
+    this.city = 'London';
 });
 
 // Controllers
-weatherApp.controller('homeCtrl', ['$scope', '$log', 'cityService', function ($scope, $log, cityService) {
+weatherApp.controller('homeCtrl', ['$scope', 'cityService', function ($scope, cityService) {
     $scope.city = cityService.city;
     
     $scope.$watch('city', function () {
@@ -30,10 +30,17 @@ weatherApp.controller('homeCtrl', ['$scope', '$log', 'cityService', function ($s
     })
 }]);
 
-weatherApp.controller('forecastCtrl', ['$scope', '$log', 'cityService', function ($scope, $log, cityService) {
+weatherApp.controller('forecastCtrl', ['$scope', '$resource', 'cityService', function ($scope, $resource, cityService) {
     $scope.city = cityService.city;
 
-    $scope.$watch('city', function () {
-        cityService.city = $scope.city;
-    })
+    $scope.weatherAPI = $resource("https://api.openweathermap.org/data/2.5/weather", {callback: "JSON_CALLBACK"}, {get: { method: 'JSONP' }});
+    $scope.weatherResult = $scope.weatherAPI.get({ q: $scope.city, appid: '886705b4c1182eb1c69f28eb8c520e20', cnt: 3 });
+
+    $scope.convertToC = function(degK){
+        return degK - 273.15;
+    };
+
+    $scope.convertToDate = function(dt){
+        return new Date(dt * 1000);
+    };
 }]);
